@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="=X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+    <title>Creating Sheet</title>
+</head>
+<body>
+    <form action="/add" method="POST">
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Level</th>
+                <th>Race</th>
+                <th>Background</th>
+                <th>Alignment</th>
+            </tr>
+            <tr>
+                <th><input type="text" name="character_name"></th>
+                <th><input type="text" name="character_class" list="classes"></th>
+                <datalist id="classes">
+                    <option value="Artificer"></option>
+                    <option value="Barbarian"></option>
+                    <option value="Bard"></option>
+                    <option value="Cleric"></option>
+                    <option value="Druid"></option>
+                    <option value="Fighter"></option>
+                    <option value="Monk"></option>
+                    <option value="Paladin"></option>
+                    <option value="Ranger"></option>
+                    <option value="Rouge"></option>
+                    <option value="Sorcerer"></option>
+                    <option value="Warlock"></option>
+                    <option value="Wizard"></option>
+                </datalist>
+                <th><input type="number" name="character_level" min="1" max="20"></th>
+                <th><input type="text" name="character_race"></th>
+                <th><input type="text" name="character_background"></th>
+                <th><input type="text" name="character_alignment" list="alignments"></th>
+                <datalist id="alignments">
+                    {% set alignments = ["LG", "NG", "CG", "LN", "TN", "CN", "LE", "NE", "CE"] %}
+                    {% for alignment in alignments %}
+                        <option value="{{ alignment }}">{{ alignment }}</option>
+                    {% endfor %}
+                </datalist>
+                <th><input type="submit" value="add"></th>
+            </tr>
+        </table>
+    </form>
+    <a href="/">Return to contents</a>
+
+</body>
+</html>

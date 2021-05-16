@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="=X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+    <title>Viewing Character</title>
+</head>
+<body>
+    <form action="/view/{{ request.view_args.id }}" method="POST">
+        <table>
+            <tr>
+                <th><b>Name</b></th>
+                <th><b>Class</b></th>
+                <th><b>Level</b></th>
+                <th><b>Race</b></th>
+                <th><b>Background</b></th>
+                <th><b>Alignment</b></th>
+            </tr>
+            {% for item in sheets %}
+                <tr>
+                    <th>{{ item[1] }}</th>
+                    <th>{{ item[2] }}</th>
+                    <th>{{ item[3] }}</th>
+                    <th>{{ item[6] }}</th>
+                    <th>{{ item[4] }}</th>
+                </tr>
+            {% endfor %}
+        </table>
+    </form>
+    <a href="/">Return to contents</a>
+
+</body>
+</html>

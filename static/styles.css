@@ -1,0 +1,32 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #000000;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #eeeeee;
+  }
+
+  tr:nth-child(odd) {
+    background-color: white;
+  }
+
+#backpackHeader {
+  text-align: center;
+  text-shadow: 2px 2px 5px cyan;
+}
+
+body {
+  background-color: darkgrey;
+}
+
+a {
+  color: wheat;
+}
