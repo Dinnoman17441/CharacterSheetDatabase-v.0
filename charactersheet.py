@@ -66,6 +66,14 @@ def add():
         db.session.commit()
     return render_template('newsheet.html')
 
+'''@app.route('/delete', methods=["GET", "POST"])
+def delete():
+    if request.method == "POST":
+        id = request.form["c_id"]
+        deleted_sheet = sheet(CharID = id)
+        db.session.delete(deleted_sheet)
+        db.session.commit()
+'''
 
 #the following code is pre-SQLALCHEMY
 
