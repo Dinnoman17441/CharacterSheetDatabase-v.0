@@ -1,80 +1,104 @@
-from flask import Flask, g, render_template, request, redirect, session, url_for, escape, Blueprint, flash
+from flask import Flask, render_template, session, redirect, url_for, request, Blueprint, flash
 from random import randint, choice
-import os
-import sqlite3
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import DateTime, Column, Integer, String
+import sqlalchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+#from config import Config
 
 app = Flask(__name__)
-app.secret_key = "1234567890qwertyuiopasdfghjklzxcvbnmokayherewego121234asdeRTFeDRAtAtygvdtygyatg7615287yGAsdTGAo7821g273gh87td9wyd678gyGFUAYdgouy9"
-DATABASE = 'charactersheets.db'
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///S:\\CharacterSheetDatabase\\charactersheets.db'
 db = SQLAlchemy(app)
 
-#def get_db():
-#    db = getattr(g, '_database', None)
-#    if db is None:
-#        db = g._database = sqlite3.connect(DATABASE)
-#    return db
+#▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+#Classes
 
-@app.context_processor
-def add_current_user():
-    if session.get('user'):
-        return dict(current_user=Userinfo.query.get(session['user']))
-    return dict(current_user=None)
+class sheet(db.Model):
+    CharID = db.Column(db.Integer, primary_key = True)
+    CharacterName = db.Column(db.String)
+    CharacterClass = db.Column(db.String)
+    Level = db.Column(db.Integer)
+    Background = db.Column(db.String)
+    Race = db.Column(db.String)
+    Alignment = db.Column(db.String(2))
 
-@app.route('/login', methods = ['GET', 'POST'])
-def login():
-   if request.method == 'POST':
-        session['username'] = request.form['username']
-        return render_template('login.html')
+class user(db.Model):
+    UserID = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50))
+    password = db.Column(db.String)
 
-@app.route('/logout')
-def logout():
-   # remove the username from the session if it is there
-   session.pop('username', None)
-   return redirect('/login')
+#▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
+#@app.route('/')
+#def contents():
+    #cursor = get_db().cursor()
+    #sql = "SELECT * FROM sheet"
+    #cursor.execute(sql)
+    #sheets = cursor.fetchall()
+    #return render_template('contents.html', sheets=sheets)
+    
 @app.route('/')
 def contents():
-    cursor = get_db().cursor()
-    sql = "SELECT * FROM sheet"
-    cursor.execute(sql)
-    sheets = cursor.fetchall()
+    sheets = sheet.query.all()
     return render_template('contents.html', sheets=sheets)
 
 @app.route('/add', methods=["GET", "POST"])
 def add():
     if request.method == "POST":
-        cursor = get_db().cursor()
+
+        #Collects new data from form
         new_name = request.form["character_name"]
         new_class = request.form["character_class"]
         new_race = request.form["character_race"]
         new_background = request.form["character_background"]
         new_level = request.form["character_level"]
         new_alignment = request.form["character_alignment"]
-        sql = "INSERT INTO sheet(CharacterName, Class, Race, Background, Level, Alignment) VALUES (?, ?, ?, ?, ?, ?)"
+        
+        #Puts new data into variable
+        new_character = sheet(CharacterName = new_name, CharacterClass = new_class, Race = new_race, Background = new_background, Level = new_level, Alignment = new_alignment)
+
+        #Adds new data to table
+        db.session.add(new_character)
+
+        #Commits the session
+        db.session.commit()
+    return render_template('newsheet.html')
+
+
+#the following code is pre-SQLALCHEMY
+
+""" @app.route('/add', methods=["GET", "POST"])
+def add():
+    if request.method == "POST":
+        #cursor = get_db().cursor()
+        new_name = request.form["character_name"]
+        new_class = request.form["character_class"]
+        new_race = request.form["character_race"]
+        new_background = request.form["character_background"]
+        new_level = request.form["character_level"]
+        new_alignment = request.form["character_alignment"]
+        sql = "INSERT INTO sheet(CharacterName, CharacterClass, Race, Background, Level, Alignment) VALUES (?, ?, ?, ?, ?, ?)"
         cursor.execute(sql,(new_name, new_class, new_race, new_background, new_level, new_alignment))
-        get_db().commit()
+        #get_db().commit()
         return redirect("/")
     return render_template('newsheet.html')
 
 @app.route("/delete", methods=["GET", "POST"])
 def delete():
     if request.method == "POST":
-        cursor = get_db().cursor()
+        #cursor = get_db().cursor()
         id = int(request.form["c_id"])
         sql = "DELETE FROM sheet WHERE CharID = ?"
         cursor.execute(sql, (id, ))
-        get_db().commit()
+        #get_db().commit()
     return redirect("/")
 
 @app.route("/edit/<int:id>", methods=["GET", "POST", "UPDATE"])
 def edit(id):
     if request.method == "POST":
-        cursor = get_db().cursor()
+        #cursor = get_db().cursor()
         edit_name = request.form["edit_character_name"]
         edit_class = request.form["edit_character_class"]
         edit_race = request.form["edit_character_race"]
@@ -82,22 +106,25 @@ def edit(id):
         edit_level = request.form["character_level"]
         edit_alignment = request.form["character_alignment"]
         sql = '''UPDATE sheet 
-        SET CharacterName = ?, Class = ?, Race = ?, Background = ?, Level = ?, Alignment = ?,
+        SET CharacterName = ?, CharacterClass = ?, Race = ?, Background = ?, Level = ?, Alignment = ?,
         WHERE CharID = ?'''
         cursor.execute(sql, (edit_name, edit_class, edit_race, edit_background, edit_level, edit_alignment, id))
-        get_db().commit()
+        #get_db().commit()
         return redirect("/")
     return render_template('editsheet.html')
 
 @app.route("/view/<int:id>", methods=["GET", "POST"])
 def view(id):
     if request.method == "GET":
-        cursor = get_db().cursor()
+        #cursor = get_db().cursor()
         sql = "SELECT * FROM sheet WHERE CharID = ?"
         cursor.execute(sql, (id, ))
         sheets = cursor.fetchall()
-        get_db().commit()
-        return render_template('viewsheet.html', sheets=sheets)
+        #get_db().commit()
+        return render_template('viewsheet.html', sheets=sheets) """
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+# For when git doesn't remember my email (everytime)
+# git config --global user.email "17441@burnside.school.nz"
