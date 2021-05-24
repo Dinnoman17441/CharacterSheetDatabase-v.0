@@ -10,6 +10,7 @@
 <body>
     <table>
         <tr>
+            <th><b>ID</b></th>
             <th><b>Character Name</b></th>
             <th><b>Class</b></th>
             <th><b>Race</b></th>
@@ -19,22 +20,23 @@
         </tr>
         {% for item in sheets %}
             <tr>
+                <th>{{ item.CharID }}</th>
                 <th>{{ item.CharacterName }}</th>
                 <th>{{ item.CharacterClass }}</th>
                 <th>{{ item.Race }}</th>
                 <td>
                     <form action="/delete" method="POST">
-                        <input type="hidden" name="c_id" value="{{ item[0] }}">
+                        <input type="hidden" name="c_id" value="{{ item.CharID }}">
                         <input type="submit" value="Delete">
                     </form>
                 </td>
                 <td>
-                    <form action="/edit/{{ item[0] }}" method="GET">
+                    <form action="/edit/{{ item.CharID }}" method="GET">
                         <input type ="submit" value="Edit">
                     </form>
                 </td>
                 <td>
-                    <form action="/view/{{ item[0] }}" method="GET">
+                    <form action="/view/{{ item.CharID }}" method="GET">
                         <input type="submit" value="View">
                     </form>
                 </td>

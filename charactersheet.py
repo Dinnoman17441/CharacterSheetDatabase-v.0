@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 #▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 #Classes
 
-class sheet(db.Model):
+class Sheet(db.Model):
     CharID = db.Column(db.Integer, primary_key = True)
     CharacterName = db.Column(db.String)
     CharacterClass = db.Column(db.String)
@@ -41,7 +41,7 @@ class user(db.Model):
     
 @app.route('/')
 def contents():
-    sheets = sheet.query.all()
+    sheets = Sheet.query.all()
     return render_template('contents.html', sheets=sheets)
 
 @app.route('/add', methods=["GET", "POST"])
@@ -57,23 +57,51 @@ def add():
         new_alignment = request.form["character_alignment"]
         
         #Puts new data into variable
-        new_character = sheet(CharacterName = new_name, CharacterClass = new_class, Race = new_race, Background = new_background, Level = new_level, Alignment = new_alignment)
+        new_character = Sheet(CharacterName = new_name, CharacterClass = new_class, Race = new_race, Background = new_background, Level = new_level, Alignment = new_alignment)
 
         #Adds new data to table
         db.session.add(new_character)
 
         #Commits the session
         db.session.commit()
+
+        #Returns user to home page
+        return redirect("/")
     return render_template('newsheet.html')
 
-'''@app.route('/delete', methods=["GET", "POST"])
+@app.route('/delete', methods=["GET", "POST"])
 def delete():
     if request.method == "POST":
         id = request.form["c_id"]
-        deleted_sheet = sheet(CharID = id)
-        db.session.delete(deleted_sheet)
+
+        #Selects row by ID and deletes it
+        Sheet.query.filter_by(CharID = id).delete()
+
+        #Commits the session
         db.session.commit()
-'''
+    return redirect("/")
+
+@app.route('/edit/<int:CharID>', methods=["GET", "POST", "UPDATE"])
+def edit(CharID):
+    if request.method == "POST":
+
+        #Collects edit data from form
+        edit_name = request.form["edit_character_name"]
+        edit_class = request.form["edit_character_class"]
+        edit_race = request.form["edit_character_race"]
+        edit_background = request.form["edit_character_background"]
+        edit_level = request.form["edit_character_level"]
+        edit_alignment = request.form["edit_character_alignment"]
+        
+        Sheet.query.filter_by(CharID = CharID).update(dict(
+            CharacterName = edit_name, CharacterClass = edit_class, Race = edit_race, Background = edit_background, Level = edit_level, Alignment = edit_alignment
+        ))
+       
+        #Commits the session
+        db.session.commit()
+        return redirect("/")
+    return render_template("editsheet.html")
+
 
 #the following code is pre-SQLALCHEMY
 
