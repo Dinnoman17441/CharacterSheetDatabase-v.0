@@ -44,6 +44,9 @@ def contents():
     sheets = Sheet.query.all()
     return render_template('contents.html', sheets=sheets)
 
+#@app.route('/createuser', methods = ['GET', 'POST'])
+
+
 @app.route('/add', methods=["GET", "POST"])
 def add():
     if request.method == "POST":
@@ -102,6 +105,11 @@ def edit(CharID):
         return redirect("/")
     return render_template("editsheet.html")
 
+@app.route('/view/<int:CharID>', methods=["GET", "POST"])
+def view(CharID):
+    if request.method == "GET":
+        sheets = Sheet.query.filter_by(CharID = CharID).all()
+    return render_template('viewsheet.html', sheets=sheets)
 
 #the following code is pre-SQLALCHEMY
 
