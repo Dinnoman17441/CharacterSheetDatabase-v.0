@@ -24,30 +24,43 @@ class Sheet(db.Model):
     Race = db.Column(db.String)
     Alignment = db.Column(db.String(2))
 
-class user(db.Model):
+class User(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     password = db.Column(db.String)
 
 #▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-#@app.route('/')
-#def contents():
-    #cursor = get_db().cursor()
-    #sql = "SELECT * FROM sheet"
-    #cursor.execute(sql)
-    #sheets = cursor.fetchall()
-    #return render_template('contents.html', sheets=sheets)
     
 @app.route('/')
 def contents():
     sheets = Sheet.query.all()
     return render_template('contents.html', sheets=sheets)
 
-#@app.route('/createuser', methods = ['GET', 'POST'])
+@app.route('/createuser', methods = ['GET', 'POST'])
+def createuser():
+    if request.method == "POST":
+        new_username = request.form["username"]
+        new_userpassword = generate_password_hash(request.form.get('password'), salt_length = 10)
+        new_user = User(username = new_username, password = new_userpassword)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect("/")
+    return render_template('createuser.html')
+
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    if session.get('user'):
+        return redirect('/')
+    if request.method == "POST":
+        user = models.User.query.filter(models.User.username == request.form.get('username')).first()
+        if user and check_password_hash(User.password, request.form.get('password')):
+            session['user'] = User.UserID
+            return redirect("/")
+    return render_template('login.html')
 
 
-@app.route('/add', methods=["GET", "POST"])
+@app.route('/add', methods = ["GET", "POST"])
 def add():
     if request.method == "POST":
 
@@ -72,7 +85,7 @@ def add():
         return redirect("/")
     return render_template('newsheet.html')
 
-@app.route('/delete', methods=["GET", "POST"])
+@app.route('/delete', methods = ["GET", "POST"])
 def delete():
     if request.method == "POST":
         id = request.form["c_id"]
@@ -84,7 +97,7 @@ def delete():
         db.session.commit()
     return redirect("/")
 
-@app.route('/edit/<int:CharID>', methods=["GET", "POST", "UPDATE"])
+@app.route('/edit/<int:CharID>', methods = ["GET", "POST", "UPDATE"])
 def edit(CharID):
     if request.method == "POST":
 
@@ -105,7 +118,7 @@ def edit(CharID):
         return redirect("/")
     return render_template("editsheet.html")
 
-@app.route('/view/<int:CharID>', methods=["GET", "POST"])
+@app.route('/view/<int:CharID>', methods = ["GET", "POST"])
 def view(CharID):
     if request.method == "GET":
         sheets = Sheet.query.filter_by(CharID = CharID).all()
@@ -113,7 +126,16 @@ def view(CharID):
 
 #the following code is pre-SQLALCHEMY
 
-""" @app.route('/add', methods=["GET", "POST"])
+"""
+@app.route('/')
+def contents():
+    #cursor = get_db().cursor()
+    #sql = "SELECT * FROM sheet"
+    #cursor.execute(sql)
+    #sheets = cursor.fetchall()
+    #return render_template('contents.html', sheets=sheets)
+
+@app.route('/add', methods=["GET", "POST"])
 def add():
     if request.method == "POST":
         #cursor = get_db().cursor()
