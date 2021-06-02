@@ -31,7 +31,19 @@ class User(db.Model):
 
 #▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-    
+
+def current_user():
+    if session.get('user'):
+        return User.query.get(session['user'])
+    else:
+        return False
+
+@app.context_processor
+def add_current_user():
+    if session.get('user'):
+        return dict(current_user = User.query.get(session['user']))
+    return dict(current_user = None)
+
 @app.route('/')
 def contents():
     sheets = Sheet.query.all()
@@ -50,15 +62,24 @@ def createuser():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-    if session.get('user'):
+    if session.get('useron'):
         return redirect('/')
     if request.method == "POST":
-        user = models.User.query.filter(models.User.username == request.form.get('username')).first()
-        if user and check_password_hash(User.password, request.form.get('password')):
-            session['user'] = User.UserID
+        useron = User.query.filter(User.username == request.form.get('login_username')).first()
+        if useron and check_password_hash(User.password, request.form.get('login_password')):
+            session['useron'] = User.UserID
             return redirect("/")
+        else:
+            return render_template('login.html', error = 'username or password incorrect')
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    try:
+        session.pop('useron')
+    except:
+        return redirect('/login', error = 'not currently logged in')
+    return redirect('/')
 
 @app.route('/add', methods = ["GET", "POST"])
 def add():
@@ -101,6 +122,8 @@ def delete():
 def edit(CharID):
     if request.method == "POST":
 
+        sheet = Sheet.query.filter_by(CharID = CharID).first()
+
         #Collects edit data from form
         edit_name = request.form["edit_character_name"]
         edit_class = request.form["edit_character_class"]
@@ -116,7 +139,7 @@ def edit(CharID):
         #Commits the session
         db.session.commit()
         return redirect("/")
-    return render_template("editsheet.html")
+    return render_template("editsheet.html", sheet = sheet)
 
 @app.route('/view/<int:CharID>', methods = ["GET", "POST"])
 def view(CharID):

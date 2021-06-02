@@ -8,13 +8,21 @@
     <title>Contents</title>
 </head>
 <body>
-    <p>lol</p>
-    <table>
+    <table id = "navtablelol">
         <tr>
-            <th><b>ID</b></th>
+            <th><a href="/add">Add new sheet</a></th>
+            <th><a href="/login">Login</a></th>
+            <th><a href="/createuser">Create an account</a></th>
+            <th><a href="/logout">Logout</a></th>
+        </tr>
+    </table> 
+    <table id = "contents">
+        <tr>
+            <th><b>ID</b></th> <!-- Will be removed -->
             <th><b>Character Name</b></th>
             <th><b>Class</b></th>
             <th><b>Race</b></th>
+            <th><b>Owner</b></th>
             <th>Delete</th>
             <th>Edit</th>
             <th>View</th>
@@ -25,6 +33,7 @@
                 <th>{{ item.CharacterName }}</th>
                 <th>{{ item.CharacterClass }}</th>
                 <th>{{ item.Race }}</th>
+                <th>placeholder</th>
                 <td>
                     <form action="/delete" method="POST">
                         <input type="hidden" name="c_id" value="{{ item.CharID }}">
@@ -44,8 +53,6 @@
             </tr>
         {% endfor %}
     </table>
-    <a href="/add">Add new sheet</a>
-    <a href="/login">Login</a>
-    <a href="/createuser">Create an account</a>
+
 </body>
 </html>
