@@ -5,11 +5,11 @@ from sqlalchemy import DateTime, Column, Integer, String
 import sqlalchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-#from config import Config
+from config import Config
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///S:\\CharacterSheetDatabase\\charactersheets.db'
+app.config.from_object(Config)
+
 db = SQLAlchemy(app)
 
 #▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -23,9 +23,11 @@ class Sheet(db.Model):
     Background = db.Column(db.String)
     Race = db.Column(db.String)
     Alignment = db.Column(db.String(2))
+    username = db.Column(db.String, db.ForeignKey('User.username'))
 
 class User(db.Model):
-    UserID = db.Column(db.Integer, primary_key=True)
+    __tablename__ = "User"
+    UserID = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(50))
     password = db.Column(db.String)
 
@@ -33,15 +35,15 @@ class User(db.Model):
 
 
 def current_user():
-    if session.get('user'):
-        return User.query.get(session['user'])
+    if session.get('useron'):
+        return User.query.get(session['useron'])
     else:
         return False
 
 @app.context_processor
 def add_current_user():
-    if session.get('user'):
-        return dict(current_user = User.query.get(session['user']))
+    if session.get('useron'):
+        return dict(current_user = User.query.get(session['useron']))
     return dict(current_user = None)
 
 @app.route('/')
@@ -66,8 +68,8 @@ def login():
         return redirect('/')
     if request.method == "POST":
         useron = User.query.filter(User.username == request.form.get('login_username')).first()
-        if useron and check_password_hash(User.password, request.form.get('login_password')):
-            session['useron'] = User.UserID
+        if useron and check_password_hash(useron.password, request.form.get('login_password')):
+            session['useron'] = useron.UserID
             return redirect("/")
         else:
             return render_template('login.html', error = 'username or password incorrect')
@@ -92,9 +94,17 @@ def add():
         new_background = request.form["character_background"]
         new_level = request.form["character_level"]
         new_alignment = request.form["character_alignment"]
+        new_owner = current_user().username
         
         #Puts new data into variable
-        new_character = Sheet(CharacterName = new_name, CharacterClass = new_class, Race = new_race, Background = new_background, Level = new_level, Alignment = new_alignment)
+        new_character = Sheet(
+            CharacterName = new_name, 
+            CharacterClass = new_class, 
+            Race = new_race, 
+            Background = new_background, 
+            Level = new_level, Alignment = new_alignment,
+            username = new_owner,
+        )
 
         #Adds new data to table
         db.session.add(new_character)
@@ -133,7 +143,12 @@ def edit(CharID):
         edit_alignment = request.form["edit_character_alignment"]
         
         Sheet.query.filter_by(CharID = CharID).update(dict(
-            CharacterName = edit_name, CharacterClass = edit_class, Race = edit_race, Background = edit_background, Level = edit_level, Alignment = edit_alignment
+            CharacterName = edit_name, 
+            CharacterClass = edit_class, 
+            Race = edit_race, 
+            Background = edit_background, 
+            Level = edit_level, 
+            Alignment = edit_alignment
         ))
        
         #Commits the session

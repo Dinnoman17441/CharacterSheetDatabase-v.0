@@ -8,10 +8,15 @@
     <title>Contents</title>
 </head>
 <body>
+    <p>{{ error }}</p>
     <table id = "navtablelol">
         <tr>
             <th><a href="/add">Add new sheet</a></th>
-            <th><a href="/login">Login</a></th>
+            {% if current_user %}
+                <th>{{('Logged in as {}'.format(current_user.username))}}</th>
+            {% else %}
+                <th><a href="/login">Login</a></th>
+            {% endif %}
             <th><a href="/createuser">Create an account</a></th>
             <th><a href="/logout">Logout</a></th>
         </tr>
@@ -33,7 +38,7 @@
                 <th>{{ item.CharacterName }}</th>
                 <th>{{ item.CharacterClass }}</th>
                 <th>{{ item.Race }}</th>
-                <th>placeholder</th>
+                <th>{{ item.username }}</th>
                 <td>
                     <form action="/delete" method="POST">
                         <input type="hidden" name="c_id" value="{{ item.CharID }}">
