@@ -11,7 +11,11 @@
     <p>{{ error }}</p>
     <table id = "navtablelol">
         <tr>
-            <th><a href="/add">Add new sheet</a></th>
+            {% if current_user %}
+                <th><a href="/add">Add new sheet</a></th>
+            {% else %}
+                <th>Log in to add new sheet</th>
+            {% endif %}
             {% if current_user %}
                 <th>{{('Logged in as {}'.format(current_user.username))}}</th>
             {% else %}
@@ -38,7 +42,7 @@
                 <th>{{ item.CharacterName }}</th>
                 <th>{{ item.CharacterClass }}</th>
                 <th>{{ item.Race }}</th>
-                <th>{{ item.username }}</th>
+                <th>{{ item.owner.username }}</th>
                 <td>
                     <form action="/delete" method="POST">
                         <input type="hidden" name="c_id" value="{{ item.CharID }}">
@@ -46,9 +50,11 @@
                     </form>
                 </td>
                 <td>
-                    <form action="/edit/{{ item.CharID }}" method="GET">
-                        <input type ="submit" value="Edit">
-                    </form>
+                    {% if current_user == item.owner %}
+                        <form action="/edit/{{ item.CharID }}" method="GET">
+                            <input type ="submit" value="Edit">
+                        </form>
+                    {% endif %}
                 </td>
                 <td>
                     <form action="/view/{{ item.CharID }}" method="GET">                    

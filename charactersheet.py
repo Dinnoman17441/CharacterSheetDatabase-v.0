@@ -12,7 +12,7 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
-#▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+#████████████████████████████████████████████████████████████████████████████████████
 #Classes
 
 class Sheet(db.Model):
@@ -23,7 +23,9 @@ class Sheet(db.Model):
     Background = db.Column(db.String)
     Race = db.Column(db.String)
     Alignment = db.Column(db.String(2))
-    username = db.Column(db.String, db.ForeignKey('User.username'))
+    OwnerID = db.Column(db.Integer, db.ForeignKey('User.UserID'), nullable = False)
+
+    owner = db.relationship("User", backref="sheets")
 
 class User(db.Model):
     __tablename__ = "User"
@@ -31,7 +33,7 @@ class User(db.Model):
     username = db.Column(db.String(50))
     password = db.Column(db.String)
 
-#▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+#███████████████████████████████████████████████████████████████████████████████████
 
 
 def current_user():
@@ -86,7 +88,6 @@ def logout():
 @app.route('/add', methods = ["GET", "POST"])
 def add():
     if request.method == "POST":
-
         #Collects new data from form
         new_name = request.form["character_name"]
         new_class = request.form["character_class"]
@@ -94,16 +95,16 @@ def add():
         new_background = request.form["character_background"]
         new_level = request.form["character_level"]
         new_alignment = request.form["character_alignment"]
-        new_owner = current_user().username
-        
+
         #Puts new data into variable
         new_character = Sheet(
             CharacterName = new_name, 
             CharacterClass = new_class, 
             Race = new_race, 
             Background = new_background, 
-            Level = new_level, Alignment = new_alignment,
-            username = new_owner,
+            Level = new_level, 
+            Alignment = new_alignment,
+            owner=current_user()
         )
 
         #Adds new data to table
@@ -130,9 +131,12 @@ def delete():
 
 @app.route('/edit/<int:CharID>', methods = ["GET", "POST", "UPDATE"])
 def edit(CharID):
+    CharID_confirm = Sheet.query.filter_by(CharID = CharID).first()
+    print(CharID_confirm.owner == current_user())
+    if CharID_confirm.owner != current_user():
+        return redirect("/")
     if request.method == "POST":
-
-        sheet = Sheet.query.filter_by(CharID = CharID).first()
+        sheets = Sheet.query.filter_by(CharID = CharID).all()
 
         #Collects edit data from form
         edit_name = request.form["edit_character_name"]
@@ -141,7 +145,7 @@ def edit(CharID):
         edit_background = request.form["edit_character_background"]
         edit_level = request.form["edit_character_level"]
         edit_alignment = request.form["edit_character_alignment"]
-        
+            
         Sheet.query.filter_by(CharID = CharID).update(dict(
             CharacterName = edit_name, 
             CharacterClass = edit_class, 
@@ -150,11 +154,12 @@ def edit(CharID):
             Level = edit_level, 
             Alignment = edit_alignment
         ))
-       
+        
         #Commits the session
         db.session.commit()
         return redirect("/")
-    return render_template("editsheet.html", sheet = sheet)
+    sheets = Sheet.query.filter_by(CharID = CharID).all()
+    return render_template("editsheet.html", sheets = sheets)
 
 @app.route('/view/<int:CharID>', methods = ["GET", "POST"])
 def view(CharID):

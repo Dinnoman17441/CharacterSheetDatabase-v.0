@@ -9,6 +9,9 @@
 </head>
 <body>
     <form action="/edit/{{ request.view_args.CharID }}" method="POST">
+        {% for item in sheets %}
+            <th>{{ item.username }}</th>
+        {% endfor %}
         <table>
             <tr>
                 <th>Name</th>
@@ -18,10 +21,10 @@
                 <th>Background</th>
                 <th>Alignment</th>
             </tr>
-            {% sheet %}
+            {% for item in sheets %}
                 <tr>
-                    <th><input type="text" name="edit_character_name" value = item.CharacterName></th>
-                    <th><input type="text" name="edit_character_class" list="classes" value = item.CharacterClass></th>
+                    <th><input type="text" name="edit_character_name" value = {{ item.CharacterName }}></th>
+                    <th><input type="text" name="edit_character_class" list="classes" value = {{ item.CharacterClass }}></th>
                     <datalist id="classes">
                         <option value="Artificer"></option>
                         <option value="Barbarian"></option>
@@ -37,15 +40,16 @@
                         <option value="Warlock"></option>
                         <option value="Wizard"></option>
                     </datalist>
-                    <th><input type="number" name="edit_character_level" min="1" max="20" value = item.Level></th>
-                    <th><input type="text" name="edit_character_race" value = item.Race></th>
-                    <th><input type="text" name="edit_character_background" value = item.Background></th>
-                    <th><input type="text" name="edit_character_alignment" list="alignments" value = item.Alignment></th>
+                    <th><input type="number" name="edit_character_level" min="1" max="20" value = {{ item.Level }}></th>
+                    <th><input type="text" name="edit_character_race" value = {{ item.Race }}></th>
+                    <th><input type="text" name="edit_character_background" value = {{ item.Background }}></th>
+                    <th><input type="text" name="edit_character_alignment" list="alignments" value = {{ item.Alignment }}></th>
                     <datalist id="alignments">
                         {% set alignments = ["LG", "NG", "CG", "LN", "TN", "CN", "LE", "NE", "CE"] %}
                         {% for alignment in alignments %}
                             <option value="{{ alignment }}">{{ alignment }}</option>
                         {% endfor %}
+                    {% endfor %}
                     </datalist>
                     <th><input type="submit" value="edit"></th>
                 </tr>
