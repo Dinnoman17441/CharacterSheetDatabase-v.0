@@ -8,7 +8,7 @@
     <title>Creating Sheet</title>
 </head>
 <body>
-    <form action="/add" method="POST">
+    <form id="newsheet" action="/add" method="POST">
         <table>
             <tr>
                 <th>Name</th>
@@ -36,7 +36,7 @@
                     <option value="Warlock"></option>
                     <option value="Wizard"></option>
                 </datalist>
-                <th><input type="number" name="character_level" min="1" max="20"></th>
+                <th><input type="number" name="character_level" min="1" max="20" value="1"></th>
                 <th><input type="text" name="character_race"></th>
                 <th><input type="text" name="character_background"></th>
                 <th><input type="text" name="character_alignment" list="alignments"></th>
@@ -47,6 +47,59 @@
                     {% endfor %}
                 </datalist>
                 <th><input type="submit" value="add"></th>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <th>STR</th>
+                <th>DEX</th>
+                <th>CON</th>
+                <th>INT</th>
+                <th>WIS</th>
+                <th>CHA</th>
+            </tr>
+            <tr>
+                <td><input type="number" name="STR" min="0"></td>
+                <td><input type="number" name="DEX" min="0"></td>
+                <td><input type="number" name="CON" min="0"></td>
+                <td><input type="number" name="INT" min="0"></td>
+                <td><input type="number" name="WIS" min="0"></td>
+                <td><input type="number" name="CHA" min="0"></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td><input type="number" name="ProfBonus" min="0" value="2"></td>
+            </tr>
+        </table>
+
+        <!-- Make this depend on choosen class later -->
+        <table>
+            <tr>
+                <input type="hidden" name="STRSaveProf" value="0">
+                <tr><input type="checkbox" id="STRSave" name="STRSaveProf" value="1"></tr>
+                <label for="STRSave">STR Save Prof</label><br>
+
+                <input type="hidden" name="DEXSaveProf" value="0">
+                <tr><input type="checkbox" id="DEXSave" name="DEXSaveProf" value="1"></tr>
+                <label for="DEXSave">DEX Save Prof</label><br>
+
+                <input type="hidden" name="CONSaveProf" value="0">
+                <tr><input type="checkbox" id="CONSave" name="CONSaveProf" value="1"></tr>
+                <label for="CONSave">CON Save Prof</label><br>
+
+                <input type="hidden" name="INTSaveProf" value="0">
+                <tr><input type="checkbox" id="INTSave" name="INTSaveProf" value="1"></tr>
+                <label for="INTSave">INT Save Prof</label><br>
+
+                <input type="hidden" name="WISSaveProf" value="0">
+                <tr><input type="checkbox" id="WISSave" name="WISSaveProf" value="1"></tr>
+                <label for="WISSave">WIS Save Prof</label><br>
+                
+                <input type="hidden" name="CHASaveProf" value="0">
+                <tr><input type="checkbox" id="CHASave" name="CHASaveProf" value="1"></tr>
+                <label for="CHASave">CHA Save Prof</label><br>
             </tr>
         </table>
     </form>

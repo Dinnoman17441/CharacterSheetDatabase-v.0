@@ -8,29 +8,98 @@
     <title>Viewing Character</title>
 </head>
 <body>
-    <form action="/view/{{ request.view_args.CharID }}" method="POST">
-        <table>
-            <tr>
-                <th><b>Name</b></th>
-                <th><b>Class</b></th>
-                <th><b>Level</b></th>
-                <th><b>Race</b></th>
-                <th><b>Background</b></th>
-                <th><b>Alignment</b></th>
-            </tr>
-            {% for item in sheets %}
+    <div id="sheet">
+        {% for item in sheets %}
+        <div class = "charactername">
+            <h1>{{ item.CharacterName }}</h1>
+        </div>
+        <div class="sheetinfo">
+            <table>
                 <tr>
-                    <th>{{ item.CharacterName }}</th>
-                    <th>{{ item.CharacterClass }}</th>
-                    <th>{{ item.Level }}</th>
-                    <th>{{ item.Alignment }}</th>
-                    <th>{{ item.Background }}</th>
-                    <th>{{ item.Race }}</th>
+                    <td>{{ item.CharacterClass }}</td>
+                    <td>{{ item.Level }}</td>
+                    <td>{{ item.Alignment }}</td>
                 </tr>
-            {% endfor %}
-        </table>
-    </form>
-    <a href="/">Return to contents</a>
+                <tr>
+                    <td><p>Class</p></td>
+                    <td><p>Level</p></td>
+                    <td><p>Alignment</p></td>
+                </tr>
+                <tr>
+                    <td>{{ item.Background }}</td>
+                    <td>{{ item.Race }}</td>
+                    <td>{{ item.owner.username }}</td>
+                </tr>
+                <tr>
+                    <td><p>Background</p></td>
+                    <td><p>Race</p></td>
+                    <td><p>Owner</p></td>
+                </tr>
+            </table>
+        </div>
+        <div id="mainstats">
+            <table>
+                <tr>
+                    <th colspan="2">STRENGTH</th>
+                </tr>
+                <tr>
+                    <td>{{ item.STR }}</td>
+                    <td>{{ item.STRMod }}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">DEXTERITY</th>
+                </tr>
+                <tr>
+                    <td>{{ item.DEX }}</td>
+                    <td>{{ item.DEXMod }}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">CONSTITUTION</th>
+                </tr>
+                <tr>
+                    <td>{{ item.CON }}</td>
+                    <td>{{ item.CONMod }}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">INTELLIGENCE</th>
+                </tr>
+                <tr>
+                    <td>{{ item.INT }}</td>
+                    <td>{{ item.INTMod }}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">WISDOM</th>
+                </tr>
+                <tr>
+                    <td>{{ item.WIS }}</td>
+                    <td>{{ item.WISMod }}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">CHARISMA</th>
+                </tr>
+                <tr>
+                    <td>{{ item.CHA }}</td>
+                    <td>{{ item.CHAMod }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+        {% endfor %}
+    {% for item in sheets %}
+        {% if current_user == item.owner %}
+            <form action="/edit/{{ item.CharID }}" method="GET">
+                <input type ="submit" value="Edit">
+            </form>
+            <form action="/delete" method="POST">
+                <input type="hidden" name="c_id" value="{{ item.CharID }}">
+                <input type="submit" value="Delete">
+            </form>
+            <form action="/spells/{{ item.CharID }}" method="GET">
+                <input type="submit" value="Spells">
+            </form>
+        {% endif %}
+    {% endfor %}
 
+    <a href="/">Return to contents</a>
 </body>
 </html>

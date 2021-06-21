@@ -8,62 +8,57 @@
     <title>Contents</title>
 </head>
 <body>
-    <p>{{ error }}</p>
-    <table id = "navtablelol">
-        <tr>
+    <header id="headtitle">
+        <h1>Character Sheet Database || Sheet List</h1>
+    </header>
+    <nav>
+        <ul id = "navlist">
             {% if current_user %}
-                <th><a href="/add">Add new sheet</a></th>
+                <li class="navth"><p>{{('Logged in as {}'.format(current_user.username))}}</p></li>
             {% else %}
-                <th>Log in to add new sheet</th>
+                <li class="navth"><a href="/login">Login</a></li>
             {% endif %}
-            {% if current_user %}
-                <th>{{('Logged in as {}'.format(current_user.username))}}</th>
-            {% else %}
-                <th><a href="/login">Login</a></th>
-            {% endif %}
-            <th><a href="/createuser">Create an account</a></th>
-            <th><a href="/logout">Logout</a></th>
-        </tr>
-    </table> 
-    <table id = "contents">
-        <tr>
-            <th><b>ID</b></th> <!-- Will be removed -->
-            <th><b>Character Name</b></th>
-            <th><b>Class</b></th>
-            <th><b>Race</b></th>
-            <th><b>Owner</b></th>
-            <th>Delete</th>
-            <th>Edit</th>
-            <th>View</th>
-        </tr>
-        {% for item in sheets %}
+            <li class="navth"><a href="/createuser">Create an account</a></li>
+            <li class="navth"><a href="/logout">Logout</a></li>
+            <li class="navth"><a href="/spells">Spells</a></li>
+        </ul>
+    </nav>
+
+    <div class="addsheet">
+        {% if current_user %}
+            <a href="/add">Add new sheet</a>
+        {% else %}
+            <p>Log in to add new sheet</p>
+        {% endif %}
+    </div>
+
+    <p> {{ error }}</p>
+    <div id="contents">
+        <table>
             <tr>
-                <th>{{ item.CharID }}</th>
-                <th>{{ item.CharacterName }}</th>
-                <th>{{ item.CharacterClass }}</th>
-                <th>{{ item.Race }}</th>
-                <th>{{ item.owner.username }}</th>
-                <td>
-                    <form action="/delete" method="POST">
-                        <input type="hidden" name="c_id" value="{{ item.CharID }}">
-                        <input type="submit" value="Delete">
-                    </form>
-                </td>
-                <td>
-                    {% if current_user == item.owner %}
-                        <form action="/edit/{{ item.CharID }}" method="GET">
-                            <input type ="submit" value="Edit">
-                        </form>
-                    {% endif %}
-                </td>
-                <td>
-                    <form action="/view/{{ item.CharID }}" method="GET">                    
-                        <input type="submit" value="View">
-                    </form>
-                </td>
+                <th><b>ID</b></th>
+                <th><b>Character Name</b></th>
+                <th><b>Class</b></th>
+                <th><b>Race</b></th>
+                <th><b>Owner</b></th>
+                <th>View</th>
             </tr>
-        {% endfor %}
-    </table>
+            {% for item in sheets %}
+                <tr>
+                    <th>{{ item.CharID }}</th>
+                    <th>{{ item.CharacterName }}</th>
+                    <th>{{ item.CharacterClass }}</th>
+                    <th>{{ item.Race }}</th>
+                    <th>{{ item.owner.username }}</th>
+                    <td>
+                        <form action="/view/{{ item.CharID }}" method="GET">                    
+                            <input type="submit" value="View">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 
 </body>
 </html>
