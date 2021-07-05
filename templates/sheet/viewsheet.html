@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="=X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
-    <title>Viewing Character</title>
-</head>
-<body>
+{% extends 'sheetbase.html' %}
+{% block body %}
+<div>
     <div id="sheet">
         {% for item in sheets %}
         <div class = "charactername">
@@ -99,7 +92,5 @@
             </form>
         {% endif %}
     {% endfor %}
-
-    <a href="/">Return to contents</a>
-</body>
-</html>
+</div>
+{% endblock body %}

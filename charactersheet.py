@@ -17,6 +17,7 @@ db = SQLAlchemy(app)
 #Classes
 
 class Sheet(db.Model):
+    __tablename__ = "Sheet"
     CharID = db.Column(db.Integer, primary_key = True)
 
     #Section One | Main Info
@@ -26,7 +27,7 @@ class Sheet(db.Model):
     Background = db.Column(db.String)
     Race = db.Column(db.String)
     Alignment = db.Column(db.String(2))
-    OwnerID = db.Column(db.Integer, db.ForeignKey('User.UserID'), nullable = False)
+    OwnerID = db.Column(db.Integer, db.ForeignKey('User.UserID'), nullable=False)
 
     owner = db.relationship("User", backref="sheets")
 
@@ -100,9 +101,12 @@ class Sheet(db.Model):
     ReligionProf = db.Column(db.Integer)
     Sleight_Of_HandProf = db.Column(db.Integer)
     StealthProf = db.Column(db.Integer)
-    SurvivalProf = db.Column(db.Integer)
+    SurvivalProf = db.Column(db.Integer)  
 
-    #
+    #Spells
+    spells = db.relationship("Spell", backref='sheet', lazy=True)
+    spell_id = db.Column(db.Integer, db.ForeignKey("Spell.SpellID"))
+    
 
 class User(db.Model):
     __tablename__ = "User"
@@ -143,7 +147,7 @@ def createuser():
         db.session.add(new_user)
         db.session.commit()
         return redirect("/")
-    return render_template('createuser.html')
+    return render_template('user/usercreate.html')
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -155,8 +159,8 @@ def login():
             session['useron'] = useron.UserID
             return redirect("/")
         else:
-            return render_template('login.html', error = 'username or password incorrect')
-    return render_template('login.html')
+            return render_template('userlogin.html', error = 'username or password incorrect')
+    return render_template('user/userlogin.html')
 
 @app.route('/logout')
 def logout():
@@ -285,7 +289,7 @@ def add():
 
         #Returns user to home page
         return redirect("/")
-    return render_template('newsheet.html')
+    return render_template('sheet/newsheet.html')
 
 @app.route('/delete', methods = ["GET", "POST"])
 def delete():
@@ -329,22 +333,23 @@ def edit(CharID):
         db.session.commit()
         return redirect("/")
     sheets = Sheet.query.filter_by(CharID = CharID).all()
-    return render_template("editsheet.html", sheets = sheets)
+    return render_template("sheet/editsheet.html", sheets = sheets)
 
 @app.route('/view/<int:CharID>', methods = ["GET", "POST"])
 def view(CharID):
     if request.method == "GET":
         sheets = Sheet.query.filter_by(CharID = CharID).all()
-    return render_template('viewsheet.html', sheets=sheets)
+    return render_template('sheet/viewsheet.html', sheets=sheets)
 
 #Spell Functions
 @app.route('/spells')
 def spells():
     spells = Spell.query.all()
-    return render_template('spellbook.html', spells=spells)
+    sheets = Sheet.query.all()
+    return render_template('spell/spellbook.html', spells=spells, sheets=sheets)
 
-@app.route('/addspell', methods = ["GET", "POST"])
-def addspell():
+@app.route('/newspell', methods = ["GET", "POST"])
+def newspell():
     if request.method == "POST":
         new_spellname = request.form["spell_name"]
         new_spellschool = request.form["spell_school"]
@@ -357,15 +362,22 @@ def addspell():
         db.session.add(new_spell)
         db.session.commit()
         return redirect("/spells")
-    return render_template('newspell.html')
+    return render_template('spell/newspell.html')
 
 @app.route('/viewspell/<int:SpellID>', methods = ["GET", "POST"])
 def viewspell(SpellID):
     if request.method == "GET":
         spells = Spell.query.filter_by(SpellID = SpellID).all()
-    return render_template('viewsheet.html', spells=spells)
+    return render_template('spell/viewspell.html', spells=spells)
+
+#@app.route('/addspell/<int:CharID>', methods = ["GET", "POST"])
+#def addspell():
+#    if request.method == "POST":
+
 
 #the following code is pre-SQLALCHEMY
+
+
 
 """
 @app.route('/')

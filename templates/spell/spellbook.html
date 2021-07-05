@@ -26,7 +26,7 @@
 
     <div class="addsheet">
         {% if current_user %}
-            <a href="/addspell">Add new Spell</a>
+            <a href="/newspell">Add new Spell</a>
         {% else %}
             <p>Log in to add new Spell</p>
         {% endif %}
@@ -51,6 +51,12 @@
                             <input type="submit" value="View">
                         </form>
                     </td>
+                    {% for item in sheets %}
+                        <form action="/addspell/{{ item.CharID }}" method="GET">
+                            <input type="hidden" name="s_id" value="{{ item.SpellID }}">
+                            <input type="submit" value="Add Spell To Sheet">
+                        </form>
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </table>
