@@ -102,10 +102,6 @@ class Sheet(db.Model):
     Sleight_Of_HandProf = db.Column(db.Integer)
     StealthProf = db.Column(db.Integer)
     SurvivalProf = db.Column(db.Integer)  
-
-    #Spells
-    spells = db.relationship("Spell", backref='sheet', lazy=True)
-    spell_id = db.Column(db.Integer, db.ForeignKey("Spell.SpellID"))
     
 
 class User(db.Model):
@@ -113,12 +109,6 @@ class User(db.Model):
     UserID = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(50))
     password = db.Column(db.String)
-
-class Spell(db.Model):
-    __tablename__ = "Spell"
-    SpellID = db.Column(db.Integer, primary_key = True)
-    SpellName = db.Column(db.String(50))
-    SpellSchool = db.Column(db.String)
 
 db.create_all()
 
@@ -340,39 +330,6 @@ def view(CharID):
     if request.method == "GET":
         sheets = Sheet.query.filter_by(CharID = CharID).all()
     return render_template('sheet/viewsheet.html', sheets=sheets)
-
-#Spell Functions
-@app.route('/spells')
-def spells():
-    spells = Spell.query.all()
-    sheets = Sheet.query.all()
-    return render_template('spell/spellbook.html', spells=spells, sheets=sheets)
-
-@app.route('/newspell', methods = ["GET", "POST"])
-def newspell():
-    if request.method == "POST":
-        new_spellname = request.form["spell_name"]
-        new_spellschool = request.form["spell_school"]
-
-        new_spell = Spell(
-            SpellName = new_spellname,
-            SpellSchool = new_spellschool,
-        )
-
-        db.session.add(new_spell)
-        db.session.commit()
-        return redirect("/spells")
-    return render_template('spell/newspell.html')
-
-@app.route('/viewspell/<int:SpellID>', methods = ["GET", "POST"])
-def viewspell(SpellID):
-    if request.method == "GET":
-        spells = Spell.query.filter_by(SpellID = SpellID).all()
-    return render_template('spell/viewspell.html', spells=spells)
-
-#@app.route('/addspell/<int:CharID>', methods = ["GET", "POST"])
-#def addspell():
-#    if request.method == "POST":
 
 
 #the following code is pre-SQLALCHEMY

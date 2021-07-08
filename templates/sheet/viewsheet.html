@@ -1,4 +1,4 @@
-{% extends 'sheetbase.html' %}
+{% extends 'sheet/sheetbase.html' %}
 {% block body %}
 <div>
     <div id="sheet">
@@ -14,9 +14,9 @@
                     <td>{{ item.Alignment }}</td>
                 </tr>
                 <tr>
-                    <td><p>Class</p></td>
-                    <td><p>Level</p></td>
-                    <td><p>Alignment</p></td>
+                    <th><p>Class</p></th>
+                    <th><p>Level</p></th>
+                    <th><p>Alignment</p></th>
                 </tr>
                 <tr>
                     <td>{{ item.Background }}</td>
@@ -24,9 +24,9 @@
                     <td>{{ item.owner.username }}</td>
                 </tr>
                 <tr>
-                    <td><p>Background</p></td>
-                    <td><p>Race</p></td>
-                    <td><p>Owner</p></td>
+                    <th><p>Background</p></th>
+                    <th><p>Race</p></th>
+                    <th><p>Owner</p></th>
                 </tr>
             </table>
         </div>
@@ -87,7 +87,7 @@
                 <input type="hidden" name="c_id" value="{{ item.CharID }}">
                 <input type="submit" value="Delete">
             </form>
-            <form action="/spells/{{ item.CharID }}" method="GET">
+            <form action="/characterspells/{{ item.CharID }}" method="GET">
                 <input type="submit" value="Spells">
             </form>
         {% endif %}

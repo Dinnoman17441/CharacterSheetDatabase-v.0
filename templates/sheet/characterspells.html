@@ -1,6 +1,20 @@
-{% extends 'sheetbase.html' %}
+{% extends 'sheet/sheetbase.html' %}
 {% block body %}
 <div>
-    
+    <form action="/addspell" method="POST">
+        <table>
+            <tr>
+                <input type="text" list="spells" name="new_spell">
+                <datalist id="spells">
+                    {% for item in spells %}
+                        <option>{{ item.SpellName }}</option>
+                    {% endfor %}
+                </datalist>
+            </tr>
+            <tr>
+                <input type="submit" value="+">
+            </tr>
+        </table>
+    </form>
 </div>
 {% endblock body %}
