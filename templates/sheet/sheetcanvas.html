@@ -13,10 +13,70 @@ Your browser does not support the HTML5 canvas tag.
         window.onload = function() {
             var canvas = document.getElementById("sheetCanvas");
             var ctx = canvas.getContext("2d");
+
+            //Gets sheet img and draws it
             var img = document.getElementById("sheet");
             ctx.drawImage(img, 350, 10);
+
+            //Sheet text
             ctx.font = "30px Arial";
             ctx.fillText('{{item.CharacterName}}', 420, 110);
+
+            ctx.font = "15px Arial";
+            ctx.fillText('{{item.CharacterClass }} {{item.Level }}', 700, 90);
+            ctx.fillText('{{item.Background}}', 845, 90);
+            ctx.fillText('{{item.owner.username}}', 970, 90);
+
+            ctx.fillText('{{item.Race}}', 700, 123);
+            ctx.fillText('{{item.Alignment}}', 845, 123);
+
+            ctx.font = "30px Arial";
+            ctx.fillText('{{item.STR}}', 406, 240);
+            ctx.fillText('{{item.DEX}}', 406, 332);
+            ctx.fillText('{{item.CON}}', 406, 424);
+            ctx.fillText('{{item.INT}}', 406, 516);
+            ctx.fillText('{{item.WIS}}', 406, 608);
+            ctx.fillText('{{item.CHA}}', 406, 700);
+
+            ctx.font = "15px Arial";
+
+            // if the stat modifier is greater to or equal to 0 then it will display a '+' infront of the number
+            if ('{{item.STRMod}}' >= 0) {
+                ctx.fillText('+{{item.STRMod}}', 415, 265);
+            } else {
+                ctx.fillText('{{item.STRMod}}', 415, 265);
+            }
+
+            if ('{{item.DEXMod}}' >= 0) {
+                ctx.fillText('+{{item.DEXMod}}', 415, 357);
+            } else {
+                ctx.fillText('{{item.DEXMod}}', 415, 357);
+            }
+
+            if ('{{item.CONMod}}' >= 0) {
+                ctx.fillText('+{{item.CONMod}}', 415, 450);
+            } else {
+                ctx.fillText('{{item.CONMod}}', 415, 450);
+            }
+
+            if ('{{item.INTMod}}' >= 0) {
+                ctx.fillText('+{{item.INTMod}}', 415, 542);
+            } else {
+                ctx.fillText('{{item.INTMod}}', 415, 542);
+            }
+
+            if ('{{item.WISMod}}' >= 0) {
+                ctx.fillText('+{{item.WISMod}}', 415, 635);
+            } else {
+                ctx.fillText('{{item.WISMod}}', 415, 635);
+            }
+
+            if ('{{item.CHAMod}}' >= 0) {
+                ctx.fillText('+{{item.CHAMod}}', 415, 727);
+            } else {
+                ctx.fillText('{{item.CHAMod}}', 415, 727);
+            }
+
         };  
     {% endfor %}
 </script>
