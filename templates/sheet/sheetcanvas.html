@@ -1,17 +1,9 @@
 {% extends 'sheet/sheetbase.html' %}
 {% block body %}
-<script>
-    window.onload = function() {
-        var canvas = document.getElementById("myCanvas");
-        var ctx = canvas.getContext("2d");
-        var img = document.getElementById("scream");
-       ctx.drawImage(img, 10, 10);
-    };
-</script>
 
-
-
-
-
-
+<canvas id="sheetCanvas" width="1500" height="3000" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag. 
+</canvas>
+<img src="/static/sheet.png" id="sheet" style="display: none;">
+<script src="/static/scripts/charactersheet.js" type="text/javascript"></script>
 {% endblock body %}

@@ -331,6 +331,12 @@ def view(CharID):
         sheets = Sheet.query.filter_by(CharID = CharID).all()
     return render_template('sheet/viewsheet.html', sheets=sheets)
 
+@app.route('/viewcanvas/<int:CharID>', methods = ["GET", "POST"])
+def viewcanvas(CharID):
+    if request.method == "GET":
+        sheets = Sheet.query.filter_by(CharID = CharID).all()
+    return render_template('sheet/sheetcanvas.html', sheets=sheets)
+
 
 #the following code is pre-SQLALCHEMY
 

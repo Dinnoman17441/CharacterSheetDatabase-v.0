@@ -87,8 +87,8 @@
                 <input type="hidden" name="c_id" value="{{ item.CharID }}">
                 <input type="submit" value="Delete">
             </form>
-            <form action="/characterspells/{{ item.CharID }}" method="GET">
-                <input type="submit" value="Spells">
+            <form action="/viewcanvas/{{ item.CharID }}" method="GET">
+                <input type="submit" value="Canvas">
             </form>
         {% endif %}
     {% endfor %}
