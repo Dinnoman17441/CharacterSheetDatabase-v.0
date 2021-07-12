@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for, request, Blueprint, flash
+from flask import Flask, render_template, session, redirect, url_for, request, Blueprint, flash, json
 from random import randint, choice
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime, Column, Integer, String, Boolean

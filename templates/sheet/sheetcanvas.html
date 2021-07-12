@@ -1,9 +1,25 @@
 {% extends 'sheet/sheetbase.html' %}
 {% block body %}
 
-<canvas id="sheetCanvas" width="1500" height="3000" style="border:1px solid #d3d3d3;">
+<canvas id="sheetCanvas" width="1500" height="1020" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag. 
 </canvas>
 <img src="/static/sheet.png" id="sheet" style="display: none;">
-<script src="/static/scripts/charactersheet.js" type="text/javascript"></script>
+
+<!-- <script src="/static/scripts/charactersheet.js" type="text/javascript"></script> !-->
+
+<script>
+    {% for item in sheets %}
+        window.onload = function() {
+            var canvas = document.getElementById("sheetCanvas");
+            var ctx = canvas.getContext("2d");
+            var img = document.getElementById("sheet");
+            ctx.drawImage(img, 350, 10);
+            ctx.font = "30px Arial";
+            ctx.fillText('{{item.CharacterName}}', 420, 110);
+        };  
+    {% endfor %}
+</script>
+
+
 {% endblock body %}
