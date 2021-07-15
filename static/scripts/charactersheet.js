@@ -7,3 +7,4 @@ window.onload = function() {
     ctx.font = "30px Arial";
     ctx.fillText("Name", 420, 110);
 };  
+*/

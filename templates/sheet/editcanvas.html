@@ -1,0 +1,147 @@
+<!-- What I plan to do here is to place input fields onto the canvas/page -->
+<!-- : ) -->
+
+{% extends 'sheet/sheetbase.html' %}
+{% block body %}
+
+<canvas id="sheetCanvas" width="1500" height="1020" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag. 
+</canvas>
+<img src="/static/sheetattackedit.png" id="sheet" style="display: none;">
+
+<!-- <script src="/static/scripts/charactersheet.js" type="text/javascript"></script> !-->
+<form>
+    <script>
+        {% for item in sheets %}
+            window.onload = function() {
+                var canvas = document.getElementById("sheetCanvas");
+                var ctx = canvas.getContext("2d");
+
+                //Gets sheet img and draws it
+                var img = document.getElementById("sheet");
+                ctx.drawImage(img, 350, 10);
+
+                //Sheet text
+                ctx.font = "30px Arial";
+                ctx.fillText('{{item.CharacterName}}', 420, 110);
+
+                ctx.font = "15px Arial";
+                ctx.fillText('{{item.CharacterClass }} {{item.Level }}', 700, 90);
+                ctx.fillText('{{item.Background}}', 845, 90);
+                ctx.fillText('{{item.owner.username}}', 970, 90);
+
+                ctx.fillText('{{item.Race}}', 700, 123);
+                ctx.fillText('{{item.Alignment}}', 845, 123);
+
+                ctx.font = "30px Arial";
+                ctx.fillText('{{item.STR}}', 406, 240);
+                ctx.fillText('{{item.DEX}}', 406, 332);
+                ctx.fillText('{{item.CON}}', 406, 424);
+                ctx.fillText('{{item.INT}}', 406, 516);
+                ctx.fillText('{{item.WIS}}', 406, 608);
+                ctx.fillText('{{item.CHA}}', 406, 700);
+
+                ctx.font = "15px Arial";
+
+                // if the stat modifier is greater to or equal to 0 then it will display a '+' infront of the number
+                if ('{{item.STRMod}}' >= 0) {
+                    ctx.fillText('+{{item.STRMod}}', 415, 265);
+                } else {
+                    ctx.fillText('{{item.STRMod}}', 415, 265);
+                }
+
+                if ('{{item.DEXMod}}' >= 0) {
+                    ctx.fillText('+{{item.DEXMod}}', 415, 357);
+                } else {
+                    ctx.fillText('{{item.DEXMod}}', 415, 357);
+                }
+
+                if ('{{item.CONMod}}' >= 0) {
+                    ctx.fillText('+{{item.CONMod}}', 415, 450);
+                } else {
+                    ctx.fillText('{{item.CONMod}}', 415, 450);
+                }
+
+                if ('{{item.INTMod}}' >= 0) {
+                    ctx.fillText('+{{item.INTMod}}', 415, 542);
+                } else {
+                    ctx.fillText('{{item.INTMod}}', 415, 542);
+                }
+
+                if ('{{item.WISMod}}' >= 0) {
+                    ctx.fillText('+{{item.WISMod}}', 415, 635);
+                } else {
+                    ctx.fillText('{{item.WISMod}}', 415, 635);
+                }
+
+                if ('{{item.CHAMod}}' >= 0) {
+                    ctx.fillText('+{{item.CHAMod}}', 415, 727);
+                } else {
+                    ctx.fillText('{{item.CHAMod}}', 415, 727);
+                }
+
+                //Proficiency Bonus
+                ctx.fillText('+{{item.ProfBonus}}', 480, 245);
+
+                //Saving Throw Proficiencies
+                if ('{{item.STRSaveProf}}' == 1) {
+                    ctx.beginPath();
+                    ctx.arc(485, 283, 2.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                if ('{{item.DEXSaveProf}}' == 1) {
+                    ctx.beginPath();
+                    ctx.arc(485, 300.5, 2.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                if ('{{item.CONSaveProf}}' == 1) {
+                    ctx.beginPath();
+                    ctx.arc(485, 318, 2.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                if ('{{item.INTSaveProf}}' == 1) {
+                    ctx.beginPath();
+                    ctx.arc(485, 335.5, 2.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                if ('{{item.WISSaveProf}}' == 1) {
+                    ctx.beginPath();
+                    ctx.arc(485, 352.75, 2.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                if ('{{item.CHASaveProf}}' == 1) {
+                    ctx.beginPath();
+                    ctx.arc(485, 370, 2.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+
+
+
+            };  
+        {% endfor %}
+
+        // Gets the x and y coordinates of where i click and sends them to the console
+        // Used for easier positioning of elements
+        function getMousePosition(canvas, event) {
+                let rect = canvas.getBoundingClientRect();
+                let x = event.clientX - rect.left;
+                let y = event.clientY - rect.top;
+                console.log( + x, + y);
+            }
+        
+            let canvasElem = document.querySelector("canvas");
+            
+            canvasElem.addEventListener("mousedown", function(e)
+            {
+                getMousePosition(canvasElem, e);
+            });
+    </script>
+
+
+{% endblock body %}

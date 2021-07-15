@@ -13,119 +13,21 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
-#████████████████████████████████████████████████████████████████████████████████████
-#Classes
-
-class Sheet(db.Model):
-    __tablename__ = "Sheet"
-    CharID = db.Column(db.Integer, primary_key = True)
-
-    #Section One | Main Info
-    CharacterName = db.Column(db.String)
-    CharacterClass = db.Column(db.String)
-    Level = db.Column(db.Integer)
-    Background = db.Column(db.String)
-    Race = db.Column(db.String)
-    Alignment = db.Column(db.String(2))
-    OwnerID = db.Column(db.Integer, db.ForeignKey('User.UserID'), nullable=False)
-
-    owner = db.relationship("User", backref="sheets")
-
-    #Section Two | Character Stats
-    STR = db.Column(db.Integer)
-    STRMod = db.Column(db.Integer)
-    DEX = db.Column(db.Integer)
-    DEXMod = db.Column(db.Integer)
-    CON = db.Column(db.Integer)
-    CONMod = db.Column(db.Integer)
-    INT = db.Column(db.Integer)
-    INTMod = db.Column(db.Integer)
-    WIS = db.Column(db.Integer)
-    WISMod = db.Column(db.Integer)
-    CHA = db.Column(db.Integer)
-    CHAMod = db.Column(db.Integer)
-
-    #Section Three | Prof Bonus and Inspiration
-    ProfBonus = db.Column(db.Integer)
-
-    #Section Four | Saving Throws
-    STRSave = db.Column(db.Integer)
-    STRSaveProf = db.Column(db.Integer)
-    DEXSave = db.Column(db.Integer)
-    DEXSaveProf = db.Column(db.Integer)
-    CONSave = db.Column(db.Integer)
-    CONSaveProf = db.Column(db.Integer)
-    INTSave = db.Column(db.Integer)
-    INTSaveProf = db.Column(db.Integer)
-    WISSave = db.Column(db.Integer)
-    WISSaveProf = db.Column(db.Integer)
-    CHASave = db.Column(db.Integer)
-    CHASaveProf = db.Column(db.Integer)
-
-    #Section Five | Skills
-    #Skills
-    Acrobatics = db.Column(db.Integer) #DEX
-    Animal_Handling = db.Column(db.Integer) #WIS
-    Arcana = db.Column(db.Integer) #INT
-    Athletics = db.Column(db.Integer) #STR
-    Deception = db.Column(db.Integer) #CHA
-    History = db.Column(db.Integer) #INT
-    Insight = db.Column(db.Integer) #WIS
-    Intimidation = db.Column(db.Integer) #CHA
-    Investigation = db.Column(db.Integer) #INT
-    Medicine = db.Column(db.Integer) #WIS
-    Nature = db.Column(db.Integer) #INT
-    Perception = db.Column(db.Integer) #WIS
-    Performance = db.Column(db.Integer) #CHA
-    Persuasion = db.Column(db.Integer) #CHA
-    Religion = db.Column(db.Integer) #INT
-    Sleight_Of_Hand = db.Column(db.Integer) #DEX
-    Stealth = db.Column(db.Integer) #DEX
-    Survival = db.Column(db.Integer) #WIS
-
-    #Skill Proficiency
-    AcrobaticsProf = db.Column(db.Integer)
-    Animal_HandlingProf = db.Column(db.Integer)
-    ArcanaProf = db.Column(db.Integer)
-    AthleticsProf = db.Column(db.Integer)
-    DeceptionProf = db.Column(db.Integer)
-    HistoryProf = db.Column(db.Integer)
-    InsightProf = db.Column(db.Integer)
-    IntimidationProf = db.Column(db.Integer)
-    InvestigationProf = db.Column(db.Integer)
-    MedicineProf = db.Column(db.Integer)
-    NatureProf = db.Column(db.Integer)
-    PerceptionProf = db.Column(db.Integer)
-    PerformanceProf = db.Column(db.Integer)
-    PersuasionProf = db.Column(db.Integer)
-    ReligionProf = db.Column(db.Integer)
-    Sleight_Of_HandProf = db.Column(db.Integer)
-    StealthProf = db.Column(db.Integer)
-    SurvivalProf = db.Column(db.Integer)  
-    
-
-class User(db.Model):
-    __tablename__ = "User"
-    UserID = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(50))
-    password = db.Column(db.String)
-
-db.create_all()
-
-#███████████████████████████████████████████████████████████████████████████████████
+from main import db
+import models
 
 
 #Login Functions
 def current_user():
     if session.get('useron'):
-        return User.query.get(session['useron'])
+        return models.User.query.get(session['useron'])
     else:
         return False
 
 @app.context_processor
 def add_current_user():
     if session.get('useron'):
-        return dict(current_user = User.query.get(session['useron']))
+        return dict(current_user = models.User.query.get(session['useron']))
     return dict(current_user = None)
 
 @app.route('/createuser', methods = ['GET', 'POST'])
@@ -133,7 +35,7 @@ def createuser():
     if request.method == "POST":
         new_username = request.form["username"]
         new_userpassword = generate_password_hash(request.form.get('password'), salt_length = 10)
-        new_user = User(username = new_username, password = new_userpassword)
+        new_user = models.User(username = new_username, password = new_userpassword)
         db.session.add(new_user)
         db.session.commit()
         return redirect("/")
@@ -144,7 +46,7 @@ def login():
     if session.get('useron'):
         return redirect('/')
     if request.method == "POST":
-        useron = User.query.filter(User.username == request.form.get('login_username')).first()
+        useron = models.User.query.filter(models.User.username == request.form.get('login_username')).first()
         if useron and check_password_hash(useron.password, request.form.get('login_password')):
             session['useron'] = useron.UserID
             return redirect("/")
@@ -163,7 +65,7 @@ def logout():
 #Sheet Functions
 @app.route('/')
 def contents():
-    sheets = Sheet.query.all()
+    sheets = models.Sheet.query.all()
     return render_template('contents.html', sheets=sheets)
 
 @app.route('/add', methods = ["GET", "POST"])
@@ -231,7 +133,7 @@ def add():
             new_CHASave = new_CHAMod
             
         #Puts new data into variable
-        new_character = Sheet(
+        new_character = models.Sheet(
             CharacterName = new_name, 
             CharacterClass = new_class, 
             Race = new_race, 
@@ -287,7 +189,7 @@ def delete():
         id = request.form["c_id"]
 
         #Selects row by ID and deletes it
-        Sheet.query.filter_by(CharID = id).delete()
+        models.Sheet.query.filter_by(CharID = id).delete()
 
         #Commits the session
         db.session.commit()
@@ -295,7 +197,7 @@ def delete():
 
 @app.route('/edit/<int:CharID>', methods = ["GET", "POST", "UPDATE"])
 def edit(CharID):
-    CharID_confirm = Sheet.query.filter_by(CharID = CharID).first()
+    CharID_confirm = models.Sheet.query.filter_by(CharID = CharID).first()
     #print(CharID_confirm.owner == current_user())
     if CharID_confirm.owner != current_user():
         return redirect("/")
@@ -310,7 +212,7 @@ def edit(CharID):
         edit_level = request.form["edit_character_level"]
         edit_alignment = request.form["edit_character_alignment"]
             
-        Sheet.query.filter_by(CharID = CharID).update(dict(
+        models.Sheet.query.filter_by(CharID = CharID).update(dict(
             CharacterName = edit_name, 
             CharacterClass = edit_class, 
             Race = edit_race, 
@@ -322,19 +224,19 @@ def edit(CharID):
         #Commits the session
         db.session.commit()
         return redirect("/")
-    sheets = Sheet.query.filter_by(CharID = CharID).all()
+    sheets = models.Sheet.query.filter_by(CharID = CharID).all()
     return render_template("sheet/editsheet.html", sheets = sheets)
 
 @app.route('/view/<int:CharID>', methods = ["GET", "POST"])
 def view(CharID):
     if request.method == "GET":
-        sheets = Sheet.query.filter_by(CharID = CharID).all()
+        sheets = models.Sheet.query.filter_by(CharID = CharID).all()
     return render_template('sheet/viewsheet.html', sheets=sheets)
 
 @app.route('/viewcanvas/<int:CharID>', methods = ["GET", "POST"])
 def viewcanvas(CharID):
     if request.method == "GET":
-        sheets = Sheet.query.filter_by(CharID = CharID).all()
+        sheets = models.Sheet.query.filter_by(CharID = CharID).all()
     return render_template('sheet/sheetcanvas.html', sheets=sheets)
 
 
