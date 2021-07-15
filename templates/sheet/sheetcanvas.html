@@ -77,8 +77,67 @@ Your browser does not support the HTML5 canvas tag.
                 ctx.fillText('{{item.CHAMod}}', 415, 727);
             }
 
+            //Proficiency Bonus
+            ctx.fillText('+{{item.ProfBonus}}', 480, 245);
+
+            //Saving Throw Proficiencies
+            if ('{{item.STRSaveProf}}' == 1) {
+                ctx.beginPath();
+                ctx.arc(485, 283, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            if ('{{item.DEXSaveProf}}' == 1) {
+                ctx.beginPath();
+                ctx.arc(485, 300.5, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            if ('{{item.CONSaveProf}}' == 1) {
+                ctx.beginPath();
+                ctx.arc(485, 318, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            if ('{{item.INTSaveProf}}' == 1) {
+                ctx.beginPath();
+                ctx.arc(485, 335.5, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            if ('{{item.WISSaveProf}}' == 1) {
+                ctx.beginPath();
+                ctx.arc(485, 352.75, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            if ('{{item.CHASaveProf}}' == 1) {
+                ctx.beginPath();
+                ctx.arc(485, 370, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+
+
+
         };  
     {% endfor %}
+
+    // Gets the x and y coordinates of where i click and sends them to the console
+    // Used for easier positioning of elements
+    function getMousePosition(canvas, event) {
+            let rect = canvas.getBoundingClientRect();
+            let x = event.clientX - rect.left;
+            let y = event.clientY - rect.top;
+            console.log( + x, + y);
+        }
+      
+        let canvasElem = document.querySelector("canvas");
+          
+        canvasElem.addEventListener("mousedown", function(e)
+        {
+            getMousePosition(canvasElem, e);
+        });
 </script>
 
 
